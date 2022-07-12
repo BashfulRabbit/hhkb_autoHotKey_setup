@@ -8,23 +8,22 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 Increments 			:= 10 ; < lower for a more granular change, higher for larger jump in brightness 
 CurrentBrightness 	:= GetCurrentBrightNess()
 
-; Hot Keys
->^a::ChangeBrightness( CurrentBrightness -= Increments ) ; decrease brightness
->^s::ChangeBrightness( CurrentBrightness += Increments ) ; increase brightness
+>^a::     ChangeBrightness( CurrentBrightness -= Increments ) ; decrease brightness
+>^s::     ChangeBrightness( CurrentBrightness += Increments ) ; increase brightness
 
-; Functions
-ChangeBrightness( ByRef brightness, timeout = 1 )
+
+ChangeBrightness( ByRef brightness := 50, timeout = 1 )
 {
-	if ( brightness > 0 && brightness < 100 )
+	if ( brightness >= 0 && brightness <= 100 )
 	{
 		For property in ComObjGet( "winmgmts:\\.\root\WMI" ).ExecQuery( "SELECT * FROM WmiMonitorBrightnessMethods" )
 			property.WmiSetBrightness( timeout, brightness )	
 	}
- 	else if ( brightness >= 100 )
+ 	else if ( brightness > 100 )
  	{
  		brightness := 100
  	}
- 	else if ( brightness <= 0 )
+ 	else if ( brightness < 0 )
  	{
  		brightness := 0
  	}
@@ -37,7 +36,6 @@ GetCurrentBrightNess()
 
 	return currentBrightness
 }
-
 
 <!h::Send, {Left}
 <!j::Send, {Down}
